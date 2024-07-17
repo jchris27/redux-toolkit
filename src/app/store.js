@@ -5,7 +5,7 @@ import userReducer from "../features/users/usersSlice"
 
 export const store = configureStore({
     reducer: {
-        counter: counterReducer,
+        // counter: counterReducer,
         posts: postReducer,
         users: userReducer
     }
