@@ -6,16 +6,17 @@ import { selectAllUsers } from "../users/usersSlice"
 const AddPostForm = () => {
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
-    const [userId, setUserId] = useState("")
+    // const [userId, setUserId] = useState("")
+    const [author, setAuthor] = useState("")
     const dispatch = useDispatch();
 
     const users = useSelector(selectAllUsers)
 
-    const renderOptions = users.map(user => (
-        <option key={user.id} value={user.id}>
-            {user.name}
-        </option>
-    ))
+    // const renderOptions = users.map(user => (
+    //     <option key={user.id} value={user.id}>
+    //         {user.name}
+    //     </option>
+    // ))
 
     const onTitleChange = (e) => {
         setTitle(e.target.value)
@@ -24,22 +25,26 @@ const AddPostForm = () => {
         setContent(e.target.value)
     }
     const onAuthorChanged = (e) => {
-        setUserId(e.target.value)
+        // setUserId(e.target.value)
+        setAuthor(e.target.value)
     }
 
     const onSavePostClicked = () => {
         if (title && content) {
-            dispatch(postAdded(title, content, userId))
+            // dispatch(postAdded(title, content, userId))
+            dispatch(postAdded(title, content, author))
         }
 
         // reset the form after sending to state
         setTitle("")
         setContent("")
-        setUserId("")
+        // setUserId("")
+        setAuthor("")
     }
 
     // check if all forms are true
-    const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
+    // const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
+    const canSave = Boolean(title) && Boolean(content) && Boolean(author)
 
     const renderContent = (
         <section>
@@ -54,10 +59,17 @@ const AddPostForm = () => {
                     onChange={onTitleChange}
                 />
                 <label htmlFor="postAuthor">Author: </label>
-                <select id="postAuthor" value={userId} name="postAuthor" onChange={onAuthorChanged}>
+                {/* <select id="postAuthor" value={userId} name="postAuthor" onChange={onAuthorChanged}>
                     <option value=""></option>
                     {renderOptions}
-                </select>
+                </select> */}
+                <input
+                    type="text"
+                    id="postAuthor"
+                    name="postAuthor"
+                    value={author}
+                    onChange={onAuthorChanged}
+                />
                 <label htmlFor="postContent">Content: </label>
                 <textarea
                     id="postContent"
