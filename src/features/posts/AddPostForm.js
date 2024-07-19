@@ -2,21 +2,23 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { postAdded } from "./postSlice"
 import { selectAllUsers } from "../users/usersSlice"
+import { addNewPost } from "./postSlice"
 
 const AddPostForm = () => {
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
-    // const [userId, setUserId] = useState("")
-    const [author, setAuthor] = useState("")
+    const [userId, setUserId] = useState("")
+    // const [author, setAuthor] = useState("")
+    const [addRequestStatus, setAddRequestStatus] = useState('idle')
     const dispatch = useDispatch();
 
     const users = useSelector(selectAllUsers)
 
-    // const renderOptions = users.map(user => (
-    //     <option key={user.id} value={user.id}>
-    //         {user.name}
-    //     </option>
-    // ))
+    const renderOptions = users.map(user => (
+        <option key={user.id} value={user.id}>
+            {user.name}
+        </option>
+    ))
 
     const onTitleChange = (e) => {
         setTitle(e.target.value)
@@ -25,26 +27,30 @@ const AddPostForm = () => {
         setContent(e.target.value)
     }
     const onAuthorChanged = (e) => {
-        // setUserId(e.target.value)
-        setAuthor(e.target.value)
-    }
-
-    const onSavePostClicked = () => {
-        if (title && content) {
-            // dispatch(postAdded(title, content, userId))
-            dispatch(postAdded(title, content, author))
-        }
-
-        // reset the form after sending to state
-        setTitle("")
-        setContent("")
-        // setUserId("")
-        setAuthor("")
+        setUserId(e.target.value)
+        // setAuthor(e.target.value)
     }
 
     // check if all forms are true
     // const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
-    const canSave = Boolean(title) && Boolean(content) && Boolean(author)
+    const canSave = [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
+
+    const onSavePostClicked = () => {
+        if (canSave) {
+            try {
+                setAddRequestStatus('pending')
+                dispatch(addNewPost({ title, body: content, userId })).unwrap()
+
+                setTitle("")
+                setContent("")
+                setUserId("")
+            } catch (err) {
+                console.error('Failed to save the post', err)
+            } finally {
+                setAddRequestStatus('idle')
+            }
+        }
+    }
 
     const renderContent = (
         <section>
@@ -59,17 +65,17 @@ const AddPostForm = () => {
                     onChange={onTitleChange}
                 />
                 <label htmlFor="postAuthor">Author: </label>
-                {/* <select id="postAuthor" value={userId} name="postAuthor" onChange={onAuthorChanged}>
+                <select id="postAuthor" value={userId} name="postAuthor" onChange={onAuthorChanged}>
                     <option value=""></option>
                     {renderOptions}
-                </select> */}
-                <input
+                </select>
+                {/* <input
                     type="text"
                     id="postAuthor"
                     name="postAuthor"
                     value={author}
                     onChange={onAuthorChanged}
-                />
+                /> */}
                 <label htmlFor="postContent">Content: </label>
                 <textarea
                     id="postContent"
